@@ -87,9 +87,9 @@ Thats it! :)
 All following text belongs to the template README.md. Cut here when you create a new template
 ✂---------------------------------
 
-# Template Data loader
+# ClinicalTrial.gov Data loader
 
-This script loads data X and Y from source Z into the neo4j based covidgraph
+This script loads data from StudyFields from ClinicalTrials.gov (https://clinicaltrials.gov/api/gui/home) into the neo4j based covidgraph
 
 Maintainer: {You}[https://github.com/{YourGitHub.Com-id}]
 
