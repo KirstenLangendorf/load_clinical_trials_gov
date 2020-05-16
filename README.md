@@ -89,9 +89,9 @@ All following text belongs to the template README.md. Cut here when you create a
 
 # ClinicalTrial.gov Data loader
 
-This script loads data from StudyFields from ClinicalTrials.gov (https://clinicaltrials.gov/api/gui/home) into the neo4j based covidgraph
+This script loads data from ClinicalTrials.gov (https://clinicaltrials.gov/api/gui/home) into the neo4j based covidgraph. The script gets data from the StudyFields, which are described on the API homepage linked above.
 
-Maintainer: {You}[https://github.com/{YourGitHub.Com-id}]
+Maintainer: Kirsten [https://github.com/KirstenLangendorf]
 
 Version: 0.0.1
 
