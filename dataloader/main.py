@@ -18,3 +18,5 @@ ENV = os.getenv('ENV', 'prod')
 graph = py2neo.Graph(neo4j_url, user=neo4j_user, password=neo4j_pw)
 
 CREATE INDEX ON :ClinicalTrial(NCTId);
+  from dataloader import load_data data_profile
+
