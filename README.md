@@ -1,4 +1,4 @@
-# ClinicalTrial.gov Data loader
+# ClinicalTrials.gov Data loader
 
 This Neo4j script loads data from [ClinicalTrials.gov API](https://clinicaltrials.gov/api/gui/home) into the neo4j based covidgraph. The script gets data from the StudyFields, which are described on this API homepage.
 
