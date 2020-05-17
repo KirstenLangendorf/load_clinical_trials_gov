@@ -7,7 +7,9 @@ Maintainer: [Kirsten](https://github.com/KirstenLangendorf)
 Version: 0.1.0
 
 Neo4j version: 3.5.17
+
 APOC  version: 3.5.0.11
+
 Developed using Neo4j Desktop version: 1.2.7
 
 Docker image location: https://hub.docker.com/repository/docker/covidgraph/data-template
