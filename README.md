@@ -171,5 +171,5 @@ At this point no results information can be found for COVID studies. This will b
 
 ## Example
 
-<a target="_blank" rel="noopener noreferrer" href="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png"><img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png" alt="Datascheme" style="max-width:100%;"></a>
-<img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png" alt="Datascheme" style="max-width:100%;">
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsExample.png"><img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsExample.png" alt="Datascheme" style="max-width:100%;"></a>
+<img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsExample.png" alt="Datascheme" style="max-width:100%;">
