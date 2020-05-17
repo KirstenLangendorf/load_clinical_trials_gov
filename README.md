@@ -166,5 +166,10 @@ Decription of the fields can be found here: https://clinicaltrials.gov/api/gui/r
 At this point no results information can be found for COVID studies. This will be added once results are avilable.
 
 ## Scheme
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png"><img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png" alt="Datascheme" style="max-width:100%;"></a>
+<img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png" alt="Datascheme" style="max-width:100%;">
 
 ## Example
+
+<a target="_blank" rel="noopener noreferrer" href="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png"><img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png" alt="Datascheme" style="max-width:100%;"></a>
+<img src="https://github.com/KirstenLangendorf/load_clinical_trials_gov/blob/master/docs/ClinicalTrialsSchema.png" alt="Datascheme" style="max-width:100%;">
