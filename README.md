@@ -113,22 +113,18 @@ Docker image location: https://hub.docker.com/repository/docker/covidgraph/data-
 
 # Data
 ## Queries to ClinicalTrials.gov
-Due to a limit of 1000 studies to be returned from a query[https://clinicaltrials.gov/api/gui/demo/simple_study_fields], the queries has been split into 3 parts:
+Due to a limit of 1000 studies to be returned from a query[https://clinicaltrials.gov/api/gui/demo/simple_study_fields], the queries has been split into 3 parts (syntax for the query):
 Studies contatining the word COVID for 
-1. Obervational studies
-2. Interventional studies
-2 NOT (Observations AND Interventional) studies - e..g expanded access
-
-The query syntax is:
-1. COVID AND AREA[StudyType]Observational
-2. COVID AND AREA[StudyType]Interventional
-3. COVID AND NOT AREA[StudyType]Interventional AND NOT AREA[StudyType]Observational
+1. Obervational studies (COVID AND AREA[StudyType]Observational)
+2. Interventional studies (COVID AND AREA[StudyType]Interventional)
+3. NOT (Observations AND Interventional) studies - e..g expanded access(COVID AND NOT AREA[StudyType]Interventional AND NOT AREA[StudyType]Observational)
 
 The following study fields are seleted:
+
 NCTId,
 
-StudyType
-,
+StudyType,
+
 Phase,
 
 Condition,
