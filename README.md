@@ -38,6 +38,20 @@ The most important Env variables are:
 
 `GC_NEO4J_PASSWORD`: The neo4j password
 
+## Python (without Docker)
+
+To run the code without docker you need to have python installed.
+
+**Setup**
+
+Install the python requirments with
+
+`pip install --no-cache-dir -r requirement.txt`
+
+Run the script with
+
+`python3 ./dataloader/main.py`
+
 # Data
 
 ## Queries to ClinicalTrials.gov
