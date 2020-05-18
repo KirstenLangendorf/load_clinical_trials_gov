@@ -1,9 +1,9 @@
-# Create Create ClinicalTrial node, StudyType nodes and connects them
-# Create the Location (Facility -> City -> Country) and link Facility to ClinicalTrial
-# Create Primary Outcome Measure (Outcome) and link to ClinicalTrial
-# Set lots of properties on ClinicalTrial
-# Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-# COVID AND AREA[StudyType]Observational
+// Create Create ClinicalTrial node, StudyType nodes and connects them
+// Create the Location (Facility -> City -> Country) and link Facility to ClinicalTrial
+// Create Primary Outcome Measure (Outcome) and link to ClinicalTrial
+// Set lots of properties on ClinicalTrial
+// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
+// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId,Phase,Condition,LeadSponsorName,LocationFacility,BriefTitle,InterventionName,CollaboratorName,LocationCity,OverallStatus,PrimaryOutcomeMeasure,EligibilityCriteria,StartDate,LocationState,StudyType,StudyFirstSubmitDate,PrimaryCompletionDate,LocationCountry&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
@@ -35,8 +35,8 @@ MERGE(ot:PrimaryOutcomeMeasure{outcome:PrimaryOutcomeMeasure}) MERGE(ct)-[:INVES
 with Id, study_metadata
 match(ct:ClinicalTrial{NCTId:Id}) 
 UNWIND study_metadata.EligibilityCriteria as EligibilityCriteria
-with Id, study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','#'),'##','#'),'#') as Exclusion, 
-split(replace(replace(trim(substring(EligibilityCriteria,19,length(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','#'),'##','#'),'#') as Inclusion
+with Id, study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','//'),'////','//'),'//') as Exclusion, 
+split(replace(replace(trim(substring(EligibilityCriteria,19,length(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','//'),'////','//'),'//') as Inclusion
 with Id, study_metadata, ct, Inclusion, Exclusion, RANGE(0,size(Inclusion)-1) as nincl
 FOREACH(i in nincl |  
 MERGE(incl:InclusionCriteria{criteria:Inclusion[i]}) MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl)) 
@@ -70,13 +70,13 @@ SET ct.studyFirstSubmitDate=CASE WHEN size(study_metadata.StudyFirstSubmitDate)=
 with Id, study_metadata
 match(ct:ClinicalTrial{NCTId:Id}) 
 UNWIND study_metadata.PrimaryCompletionDate as PrimaryCompletionDate
-SET ct.primaryCompletionDate=CASE WHEN size(study_metadata.PrimaryCom;
-# Create Create ClinicalTrial node, StudyType nodes and connects them
-# Create the Location (Facility -> City -> Country) and link Facility to ClinicalTrial
-# Create Primary Outcome Measure (Outcome) and link to ClinicalTrial
-# Set lots of properties on ClinicalTrial
-# Interventional - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-# COVID AND AREA[StudyType]Interventional
+SET ct.primaryCompletionDate=CASE WHEN size(study_metadata.PrimaryCompletionDate)=1 THEN PrimaryCompletionDate ELSE study_metadata.PrimaryCompletionDate END;
+// Create Create ClinicalTrial node, StudyType nodes and connects them
+// Create the Location (Facility -> City -> Country) and link Facility to ClinicalTrial
+// Create Primary Outcome Measure (Outcome) and link to ClinicalTrial
+// Set lots of properties on ClinicalTrial
+// Interventional - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
+// COVID AND AREA[StudyType]Interventional
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId,Phase,Condition,LeadSponsorName,LocationFacility,BriefTitle,InterventionName,CollaboratorName,LocationCity,OverallStatus,PrimaryOutcomeMeasure,EligibilityCriteria,StartDate,LocationState,StudyType,StudyFirstSubmitDate,PrimaryCompletionDate,LocationCountry&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
@@ -110,8 +110,8 @@ MERGE(ot:PrimaryOutcomeMeasure{outcome:PrimaryOutcomeMeasure}) MERGE(ct)-[:INVES
 with Id, study_metadata
 match(ct:ClinicalTrial{NCTId:Id}) 
 UNWIND study_metadata.EligibilityCriteria as EligibilityCriteria
-with Id, study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','#'),'##','#'),'#') as Exclusion, 
-split(replace(replace(trim(substring(EligibilityCriteria,19,length(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','#'),'##','#'),'#') as Inclusion
+with Id, study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','//'),'////','//'),'//') as Exclusion, 
+split(replace(replace(trim(substring(EligibilityCriteria,19,length(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','//'),'////','//'),'//') as Inclusion
 with Id, study_metadata, ct, Inclusion, Exclusion, RANGE(0,size(Inclusion)-1) as nincl
 FOREACH(i in nincl | 
 MERGE(incl:InclusionCriteria{criteria:Inclusion[i]}) MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl))
@@ -147,13 +147,13 @@ match(ct:ClinicalTrial{NCTId:Id})
 UNWIND study_metadata.PrimaryCompletionDate as PrimaryCompletionDate
 SET ct.primaryCompletionDate=CASE WHEN size(study_metadata.PrimaryCompletionDate)=1 THEN PrimaryCompletionDate ELSE study_metadata.PrimaryCompletionDate END
 ;
-# Create Create ClinicalTrial node, StudyType nodes and connects them
-# Create the Location (Facility -> City -> Country) and link Facility to ClinicalTrial
-# Create Primary Outcome Measure (Outcome) and link to ClinicalTrial
-# Set lots of properties on ClinicalTrial
-# - NOT OBSERVATIONAL AND INTERVENTIONAL STUDIES
-# All others - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-# COVID AND NOT AREA[StudyType]Interventional AND NOT AREA[StudyType]Observational
+// Create Create ClinicalTrial node, StudyType nodes and connects them
+// Create the Location (Facility -> City -> Country) and link Facility to ClinicalTrial
+// Create Primary Outcome Measure (Outcome) and link to ClinicalTrial
+// Set lots of properties on ClinicalTrial
+// - NOT OBSERVATIONAL AND INTERVENTIONAL STUDIES
+// All others - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
+// COVID AND NOT AREA[StudyType]Interventional AND NOT AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId,Phase,Condition,LeadSponsorName,LocationFacility,BriefTitle,InterventionName,CollaboratorName,LocationCity,OverallStatus,PrimaryOutcomeMeasure,EligibilityCriteria,StartDate,LocationState,StudyType,StudyFirstSubmitDate,PrimaryCompletionDate,LocationCountry&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
@@ -185,8 +185,8 @@ MERGE(ot:PrimaryOutcomeMeasure{outcome:PrimaryOutcomeMeasure}) MERGE(ct)-[:INVES
 with Id, study_metadata
 match(ct:ClinicalTrial{NCTId:Id}) 
 UNWIND study_metadata.EligibilityCriteria as EligibilityCriteria
-with Id, study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','#'),'##','#'),'#') as Exclusion, 
-split(replace(replace(trim(substring(EligibilityCriteria,19,length(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','#'),'##','#'),'#') as Inclusion
+with Id, study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','//'),'////','//'),'//') as Exclusion, 
+split(replace(replace(trim(substring(EligibilityCriteria,19,length(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','//'),'////','//'),'//') as Inclusion
 with Id, study_metadata, ct, Inclusion, Exclusion, RANGE(0,size(Inclusion)-1) as nincl
 FOREACH(i in nincl | 
 MERGE(incl:InclusionCriteria{criteria:Inclusion[i]}) MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl))
@@ -222,6 +222,6 @@ match(ct:ClinicalTrial{NCTId:Id})
 UNWIND study_metadata.PrimaryCompletionDate as PrimaryCompletionDate
 SET ct.primaryCompletionDate=CASE WHEN size(study_metadata.PrimaryCompletionDate)=1 THEN PrimaryCompletionDate ELSE study_metadata.PrimaryCompletionDate END
 ;
-# Remove Inclusion or Exclusion nodes that are '-' or none
+// Remove Inclusion or Exclusion nodes that are '-' or none
 match(i:InclusionCriteria) where i.criteria in ['-', 'none'] DETACH DELETE i;
-match(e:ExclusionCriteria) where e.criteria in ['-', 'none'] DETACH DELETE  e;
+match(e:ExclusionCriteria) where e.criteria in ['-', 'none'] DETACH DELETE e;
