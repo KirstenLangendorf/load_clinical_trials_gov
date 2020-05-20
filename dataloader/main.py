@@ -94,3 +94,4 @@ if __name__ == "__main__":
             log.info("\nRun query \n'{}'".format(q))
             tx = graph.begin()
             tx.run(q)
+            tx.commit()
