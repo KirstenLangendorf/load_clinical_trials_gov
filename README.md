@@ -16,15 +16,12 @@ Docker image location: [covidgraph/data-clinical_trials_gov](https://hub.docker.
 
 ## Docker
 
-### Run
+### Run prebuild  image
 
 `docker run -it --rm --name data-cord19 -e GC_NEO4J_URL="bolt://${HOSTNAME}:7687" covidgraph/data-clinical_trials_gov`
-
-### Build local image
+### Build and run local image
 
 `docker build -t data-clinical_trials_gov .`
-
-### Run local image
 
 `docker run -it --rm --name data-cord19 -e GC_NEO4J_URL='bolt://myneo4jhostname:7687' -e GC_NEO4J_USER=neo4j -e GC_NEO4J_PASSWORD=mysecret data-clinical_trials_gov`
 
