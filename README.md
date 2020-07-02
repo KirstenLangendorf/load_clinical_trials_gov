@@ -4,7 +4,7 @@ This python script loads data from [ClinicalTrials.gov API](https://clinicaltria
 
 Maintainer: [Kirsten](https://github.com/KirstenLangendorf)
 
-Version: 0.1.1
+Version: 0.2.1
 
 Neo4j version: < 3.5.17
 
@@ -59,44 +59,6 @@ Studies contatining the word COVID for
 1. Obervational studies (COVID AND AREA[StudyType]Observational)
 2. Interventional studies (COVID AND AREA[StudyType]Interventional)
 3. NOT (Observations AND Interventional) studies - e..g expanded access(COVID AND NOT AREA[StudyType]Interventional AND NOT AREA[StudyType]Observational)
-
-The following study fields are seleted:
-
-NCTId,
-
-StudyType,
-
-Phase,
-
-Condition,
-
-BriefTitle,
-
-LeadSponsorName,
-
-LocationFacility,
-
-LocationCity,
-
-LocationState,
-
-LocationCountry,
-
-InterventionName,
-
-CollaboratorName,
-
-OverallStatus,
-
-PrimaryOutcomeMeasure,
-
-EligibilityCriteria,
-
-StartDate,
-
-StudyFirstSubmitDate,
-
-PrimaryCompletionDate.
 
 Decription of the fields can be found here: https://clinicaltrials.gov/api/gui/ref/crosswalks.
 
