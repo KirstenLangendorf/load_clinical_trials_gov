@@ -85,9 +85,8 @@ MERGE(ct)-[:IS_SUPPORTED_BY]->(sp);
 // Oversight: IsFDARegulatedDrug,IsFDARegulatedDevice, IsUnapprovedDevice, HasExpandedAccess
 // Interventional studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
 // COVID AND AREA[StudyType]Interventional
-%%cypher 
 MERGE(r:Response{YN:'Yes'})
-MERGE(k:Response{YN:'No'})
+MERGE(k:Response{YN:'No'});
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
