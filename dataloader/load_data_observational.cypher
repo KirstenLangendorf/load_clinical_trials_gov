@@ -1,8 +1,4 @@
 CREATE INDEX ON :ClinicalTrial(NCTId);
-// Create Create ClinicalTrial(NCTId)
-// Study Identification: OrgStudyId,BriefTitle,Acronym,OfficialTitle,StudyType
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -22,9 +18,6 @@ WITH Id, si, study_metadata
 UNWIND study_metadata.BriefTitle as BriefTitle
 UNWIND study_metadata.OfficialTitle as OfficialTitle
 MERGE (t:Title{briefTitle:BriefTitle,officialTitle:OfficialTitle}) MERGE (si)-[:HAS_TITLE]->(t);
-// Study Status: OverallStatus,WhyStopped,StartDate,PrimaryCompletionDate,CompletionDate
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -48,9 +41,6 @@ with ct, study_metadata
 UNWIND study_metadata.PrimaryCompletionDate as PrimaryCompletionDate
 UNWIND study_metadata.CompletionDate as CompletionDate
 MERGE (e:Completed{primaryCompletionDate:PrimaryCompletionDate, completionDate: CompletionDate}) MERGE (ct)-[:COMPLETED_AT]->(e);
-// Sponsor/Collaborators: ResponsiblePartyType,ResponsiblePartyInvestigatorFullName,ResponsiblePartyInvestigatorAffiliation,LeadSponsorName,CollaboratorName
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -82,9 +72,6 @@ with ct, study_metadata
 UNWIND study_metadata.CollaboratorName as CollaboratorName
 MERGE(sp:Collaborator{name:CollaboratorName})
 MERGE(ct)-[:IS_SUPPORTED_BY]->(sp);
-// Oversight: IsFDARegulatedDrug,IsFDARegulatedDevice, IsUnapprovedDevice, HasExpandedAccess
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 MERGE(r:Response{YN:'Yes'})
 MERGE(k:Response{YN:'No'});
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
@@ -119,10 +106,6 @@ FOREACH(ignoreMe IN CASE WHEN IsUnapprovedDevice='No' THEN [1] ELSE [] END |
     MERGE(ct)-[:IS_UNAPPROVED_DEVICE]->(r))
 FOREACH(ignoreMe IN CASE WHEN HasExpandedAccess='No' THEN [1] ELSE [] END | 
      MERGE(ct)-[:HAS_EXPANDED_ACCESS]->(r));
-// Study Description: BriefSummary, DetailedDescription
-// Conditions and Keywords: Condition, Keyword
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -142,9 +125,6 @@ MERGE (c:Condition{disease:Condition})
 MERGE(k:Keyword{word:Keyword}) 
 MERGE (ct)-[:IS_STUDYING]->(c)
 MERGE (c)-[:HAS_KEYWORD]->(k);
-// Study Design: DesignObservationalModel,DesignTimePerspective,BioSpecRetention,BioSpecDescription
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -164,9 +144,6 @@ MERGE (ct)-[:HAS_STUDY_DESIGN]->(m)
 MERGE (ct)-[:HAS_OBSERVATION_PERIOD]->(t)
 MERGE(b:BioSpecimen{retension:BioSpecRetention, description:BioSpecDescription})
 MERGE(ct)-[:HAS_SMAPLES_RETAINED_IN_BIOREPOSITORY]->(b);
-// Arms, Groups and Interventions: ArmGroupLabel,ArmGroupType,ArmGroupDescription,InterventionType,InterventionName,InterventionOtherName,InterventionDescription
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -190,11 +167,6 @@ MERGE(e:Intervention{name:study_metadata.InterventionName[i],description:'',type
         SET e.description=study_metadata.InterventionDescription[i]
         SET e.type=study_metadata.InterventionType[i]
         MERGE(ct)-[:INVESTIGATES_INTERVENTION]->(e));
-// Outcome Measures: PrimaryOutcomeMeasure,PrimaryOutcomeDescription,PrimaryOutcomeTimeFrame, 
-//                   SecondaryOutcomeMeasure,SecondaryOutcomeDescription,SecondaryOutcomeTimeFrame,
-//                   OtherOutcomeMeasure,OtherOutcomeDescription,OtherOutcomeTimeFrame
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -226,10 +198,6 @@ MERGE(a:Outcome{name:study_metadata.OtherOutcomeMeasure[i],description:'',type:'
         SET a.time=study_metadata.OtherOutcomeTimeFrame[i]
         MERGE(ct)-[:HAS_OTHER_OUTCOME]->(a)
         );
-// Eligibility:Gender,GenderBased,GenderDescription,MinimumAge,MaximumAge,HealthyVolunteers,StudyPopulation,
-// SamplingMethod,EligibilityCriteria 
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -265,10 +233,6 @@ MERGE(incl:InclusionCriteria{criteria:Inclusion[i]}) MERGE(ct)-[:HAS_INCLUSION_C
 with study_metadata, ct, Inclusion, Exclusion, RANGE(0,size(Exclusion)-1) as nexcl
 FOREACH(i in nexcl | 
 MERGE(excl:ExclusionCriteria{criteria:Exclusion[i]}) MERGE(ct)-[:HAS_EXCLUSION_CRITERIA]->(excl));
-// Contacts, Locations, and Investigator Information:CentralContactName,CentralContactEmail,OverallOfficialName,
-// OverallOfficialAffiliation,OverallOfficialRole
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -284,9 +248,6 @@ MERGE (ct)-[:HAS_CONTACT_PERSON]->(c)
 with study_metadata,c
 UNWIND study_metadata.CentralContactEmail as Email
 SET c.email=Email;
-// LocationFacility,LocationCity,LocationState,LocationCountry
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-/// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -310,9 +271,6 @@ FOREACH(i in ncity |
         MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
         MERGE(ci)-[:LOCATED_IN]->(c) 
                );
-// Citations: ReferencePMID,ReferenceCitation,ReferenceType,SeeAlsoLinkURL
-// Observational studies - QUERY at https://clinicaltrials.gov/api/gui/demo/simple_study_fields:
-// COVID AND AREA[StudyType]Observational
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -338,29 +296,4 @@ MERGE(l:Link{url:URL})
 MERGE(ct)-[:REFERS_TO_URL]->(l);
 //Remove Inclusion or Exclusion nodes that are '-' or none
  match(i:InclusionCriteria) where i.criteria in ['-', 'none'] DETACH DELETE i;
- match(e:ExclusionCriteria) where e.criteria in ['-', 'none'] DETACH DELETE  ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ match(e:ExclusionCriteria) where e.criteria in ['-', 'none'] DETACH DELETE e;
