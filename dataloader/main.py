@@ -14,7 +14,7 @@ if __name__ == "__main__":
     PARENT_DIR = os.path.join(SCRIPT_DIR, "..")
     sys.path.append(os.path.normpath(PARENT_DIR))
 
-cypher_files = ["load_data.cypher"]
+cypher_files = ["load_data_observational.cypher","load_data_investigational.cypher","load_data_expanded_access.cypher"]
 
 neo4j_url = os.getenv("GC_NEO4J_URL", "bolt://localhost:7687")
 neo4j_user = os.getenv("GC_NEO4J_USER", None)
