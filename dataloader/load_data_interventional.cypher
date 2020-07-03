@@ -272,16 +272,16 @@ UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 WITH Id, ct, study_metadata, RANGE(0,size(study_metadata.LocationFacility)-1) as nfacil
 FOREACH(i in nfacil | 
-        MERGE(fa:Facility{facilityName:study_metadata.LocationFacility[i]})
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(fa:Facility{name:study_metadata.LocationFacility[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
+        MERGE(c:Country{name:study_metadata.LocationCountry[i]})
         MERGE(ct)-[:CONDUCTED_AT]->(fa)
         MERGE(fa)-[:LOCATED_IN]->(ci)
        )
 WITH Id, study_metadata, RANGE(0,size(study_metadata.LocationCity)-1) as ncity
 FOREACH(i in ncity | 
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
+        MERGE(c:Country{name:study_metadata.LocationCountry[i]})
         MERGE(ci)-[:LOCATED_IN]->(c) 
                )
 ;
