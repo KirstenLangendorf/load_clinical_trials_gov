@@ -130,7 +130,7 @@ MERGE (c:Condition{disease:Condition})
 MERGE(k:Keyword{word:Keyword}) 
 MERGE (ct)-[:IS_STUDYING]->(c)
 MERGE (c)-[:HAS_KEYWORD]->(k);
-// Study Design: DesignPrimaryPurpose,Phase,DesignInterventionalModel,DesignInterventionalModelDescription
+// Study Design: DesignPrimaryPurpose,Phase,DesignInterventionModel,DesignInterventionModelDescription
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
@@ -139,10 +139,10 @@ with RANGES, RANGES[1] as urange, RANGES[0] as lrange
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId,DesignPrimaryPurpose,Phase,DesignInterventionModel,DesignInterventionModelDescription&min_rnk='+lrange+'&max_rnk='+urange+'&fmt=json') yield value
 with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
-UNWIND study_metadata.DesignInterventionalModel as Model
+UNWIND study_metadata.DesignInterventionModel as Model
 UNWIND study_metadata.DesignPrimaryPurpose as Purpose
 UNWIND study_metadata.Phase as Phase
-UNWIND study_metadata.DesignInterventionalModelDescription as ModelDescription
+UNWIND study_metadata.DesignInterventionModelDescription as ModelDescription
 match(ct:ClinicalTrial{NCTId:Id})
 MERGE(m:Design{name:Model,description:ModelDescription}) 
 MERGE(p:Purpose{name:Purpose})
