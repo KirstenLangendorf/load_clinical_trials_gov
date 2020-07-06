@@ -139,17 +139,19 @@ with RANGES, RANGES[1] as urange, RANGES[0] as lrange
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId,DesignPrimaryPurpose,Phase,DesignInterventionModel,DesignInterventionModelDescription&min_rnk='+lrange+'&max_rnk='+urange+'&fmt=json') yield value
 with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
-UNWIND study_metadata.DesignInterventionModel as Model
-UNWIND study_metadata.DesignPrimaryPurpose as Purpose
 UNWIND study_metadata.Phase as Phase
-UNWIND study_metadata.DesignInterventionModelDescription as ModelDescription
 match(ct:ClinicalTrial{NCTId:Id})
-MERGE(m:Design{name:Model,description:ModelDescription}) 
-MERGE(p:Purpose{name:Purpose})
 MERGE(ph:Phase{phase:Phase}) 
 MERGE(ct)-[:IS_PHASE]->(ph)
-MERGE(ct)-[:HAS_PURPOSE]->(p)
-MERGE (ct)-[:HAS_STUDY_DESIGN]->(m);
+with ct, study_metadata
+UNWIND study_metadata.DesignInterventionModel as Model
+UNWIND study_metadata.DesignInterventionModelDescription as ModelDescription
+MERGE(m:Design{name:Model,description:ModelDescription})
+MERGE (ct)-[:HAS_STUDY_DESIGN]->(m)
+with ct, study_metadata
+UNWIND study_metadata.DesignPrimaryPurpose as Purpose
+MERGE(p:Purpose{name:Purpose})
+MERGE(ct)-[:HAS_PURPOSE]->(p);
 // Arms, Groups and Interventions: ArmGroupLabel,ArmGroupType,ArmGroupDescription,InterventionType,InterventionName,InterventionOtherName,InterventionDescription
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
