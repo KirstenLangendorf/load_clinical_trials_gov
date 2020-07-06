@@ -141,7 +141,7 @@ with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
 UNWIND study_metadata.DesignInterventionalModel as Model
 UNWIND study_metadata.DesignPrimaryPurpose as Purpose
-UNWIND study_metadata.phase as Phase
+UNWIND study_metadata.Phase as Phase
 UNWIND study_metadata.DesignInterventionalModelDescription as ModelDescription
 match(ct:ClinicalTrial{NCTId:Id})
 MERGE(m:Design{name:Model,description:ModelDescription}) 
