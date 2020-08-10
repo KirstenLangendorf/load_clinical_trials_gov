@@ -299,7 +299,7 @@ UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 with ct, study_metadata, RANGE(0,size(study_metadata.ReferencePMID)-1) as nref
 FOREACH(i in nref | 
-        MERGE(p:PubMedId{name:study_metadata.ReferencePMID[i]})
+        MERGE(p:PaperId{id:study_metadata.ReferencePMID[i],type:'pubmed_id'})
         MERGE(c:Citation{name:study_metadata.ReferenceCitation[i]})
         MERGE(r:ReferenceType{name:study_metadata.ReferenceType[i]})
         MERGE(ct)-[:REFERS_TO]->(c)
