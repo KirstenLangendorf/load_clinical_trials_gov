@@ -21,8 +21,8 @@ cypher_files = [
     "load_data_expanded_access.cypher",
 ]
 
-neo4j_config_str = os.getenv("NEO4J", '{"host": "localhost"}')
-neo4j_config_dict = json.load(neo4j_config_str)
+neo4j_config_str = os.getenv("NEO4J", '{"host":"localhost"}')
+neo4j_config_dict = json.loads(neo4j_config_str)
 ENV = os.getenv("ENV", "prod")
 
 
