@@ -1,4 +1,4 @@
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -23,7 +23,7 @@ with si, study_metadata
 UNWIND study_metadata.Acronym as Acronym
 set si.acronym=Acronym
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -48,7 +48,7 @@ UNWIND study_metadata.WhyStopped as WhyStopped
 MERGE(ct)-[:WAS_STOPPED]->(r:StopReason{reason:WhyStopped})
 MERGE(s)-[:HAS_REASON]->(r)
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -61,9 +61,10 @@ with r, study_metadata
 UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id}) 
 UNWIND study_metadata.LeadSponsorName as LeadSponsorName
-MERGE(ct)-[:IS_SPONSORED_BY]->(k:Sponsor{name:LeadSponsorName})
+MERGE(k:Sponsor{name:LeadSponsorName})
 FOREACH(ignoreMe IN CASE WHEN r.type='Sponsor' THEN [1] ELSE [] END | 
-    MERGE(r)-[:IS_RESPOSIBLE]->(k))
+    MERGE(r)-[:IS_RESPONSIBLE]->(k)
+    MERGE(ct)-[:IS_SPONSORED_BY]->(k))
 with ct, k, r, study_metadata
 UNWIND study_metadata.ResponsiblePartyInvestigatorFullName  as InvestigatorFullName
 UNWIND study_metadata.ResponsiblePartyInvestigatorAffiliation as InvestigatorAffiliation
@@ -71,12 +72,12 @@ MERGE(i:Investigator{name:InvestigatorFullName, affiliation:InvestigatorAffiliat
 MERGE(ct)-[:IS_CONDUCTED_BY]->(i)
 with ct, r, i,k,study_metadata
 FOREACH(ignoreMe IN CASE WHEN r.type='Principal Investigator' THEN [1] ELSE [] END | 
-    MERGE(r)-[:IS_RESPOSIBLE]->(i))
+    MERGE(r)-[:IS_RESPONSIBLE]->(i))
 FOREACH(ignoreMe IN CASE WHEN r.type='Sponsor-Investigator' THEN [1] ELSE [] END | 
-    MERGE(r)-[:IS_RESPOSIBLE]->(k) 
-    MERGE(r)-[:IS_RESPOSIBLE]->(i))
+    MERGE(r)-[:IS_RESPONSIBLE]->(k) 
+    MERGE(r)-[:IS_RESPONSIBLE]->(i))
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -89,11 +90,11 @@ UNWIND study_metadata.CollaboratorName as CollaboratorName
 MERGE(sp:Collaborator{name:CollaboratorName})
 MERGE(ct)-[:IS_SUPPORTED_BY]->(sp)
 ;
- MERGE(r:Response{YN:'Yes'})
+MERGE(r:Response{YN:'Yes'})
 ;
- MERGE(k:Response{YN:'No'})
+MERGE(k:Response{YN:'No'})
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -112,7 +113,7 @@ UNWIND study_metadata.IsUnapprovedDevice as IsUnapprovedDevice
 FOREACH(ignoreMe IN CASE WHEN IsUnapprovedDevice='No' THEN [1] ELSE [] END | 
       MERGE(ct)-[:IS_FDA_REGULATED_DEVICE]->(r))
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -131,7 +132,7 @@ match(ct:ClinicalTrial{NCTId:Id}),(r:Response{YN:'No'})
 FOREACH(ignoreMe IN CASE WHEN IsFDARegulatedDrug='No' THEN [1] ELSE [] END | 
     MERGE(ct)-[:IS_FDA_REGULATED_DRUG]->(r))
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -150,7 +151,7 @@ UNWIND study_metadata.IsFDARegulatedDevice as IsFDARegulatedDevice
 FOREACH(ignoreMe IN CASE WHEN IsFDARegulatedDevice='No' THEN [1] ELSE [] END | 
       MERGE(ct)-[:IS_FDA_REGULATED_DEVICE]->(r))
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -169,7 +170,7 @@ UNWIND study_metadata.HasExpandedAccess as HasExpandedAccess
 FOREACH(ignoreMe IN CASE WHEN HasExpandedAccess='No' THEN [1] ELSE [] END | 
       MERGE(ct)-[:HAS_EXPANDED_ACCESS]->(r))
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -182,15 +183,17 @@ UNWIND study_metadata.BriefSummary as BriefSummary
 MERGE (ct)-[:HAS_DESCRIPTION]->(t:Description{summary:BriefSummary})
 with ct,t, study_metadata
 UNWIND study_metadata.Condition as Condition
-MERGE (ct)-[:IS_STUDYING]->(c:Condition{disease:Condition})
+MERGE (c:Condition{disease:Condition})
+MERGE (ct)-[:IS_STUDYING]->(c)
 with ct, c, t,study_metadata
 UNWIND study_metadata.Keyword as Keyword
-MERGE(ct)-[:IS_STUDYING]->(k:Keyword{word:Keyword}) 
+MERGE(k:Keyword{word:Keyword}) 
+MERGE(ct)-[:IS_STUDYING]->(k) 
 with ct, t, study_metadata
 UNWIND study_metadata.DetailedDescription as DetailedDescription
 set t.description=DetailedDescription
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -203,7 +206,7 @@ match(ct:ClinicalTrial{NCTId:Id})
 MERGE(m:Design{model:Model}) 
 MERGE (ct)-[:HAS_STUDY_DESIGN]->(m)
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -216,7 +219,7 @@ match(ct:ClinicalTrial{NCTId:Id})
 MERGE(t:ObservationPeriod{time:DesignTimePerspective})
 MERGE (ct)-[:HAS_OBSERVATION_PERIOD]->(t)
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -232,7 +235,7 @@ with b, study_metadata
 UNWIND study_metadata.BioSpecDescription as BioSpecDescription
 SET b.description=BioSpecDescription
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -250,7 +253,7 @@ MERGE(a:Arm{name:study_metadata.ArmGroupLabel[i]})
         MERGE(ct)-[:HAS_STUDY_ARMS]->(a)-[:BELONGS_TO_MODEL]->(m)
         )
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -266,7 +269,7 @@ MERGE(ct)-[:INVESTIGATES_INTERVENTION]->(e:Intervention{name:study_metadata.Inte
   ON CREATE SET e.type=study_metadata.InterventionType[i]
         )
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -282,7 +285,7 @@ MERGE(ct)-[:HAS_PRIMARY_OUTCOME]->(a:Outcome{name:study_metadata.PrimaryOutcomeM
   ON CREATE SET a.time=study_metadata.PrimaryOutcomeTimeFrame[i]
                )
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -298,7 +301,7 @@ MERGE(ct)-[:HAS_SECONDARY_OUTCOME]->(a:Outcome{name:study_metadata.SecondaryOutc
   ON CREATE SET a.time=study_metadata.SecondaryOutcomeTimeFrame[i]
         )
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -314,7 +317,7 @@ MERGE(ct)-[:HAS_OTHER_OUTCOME]->(a:Outcome{name:study_metadata.OtherOutcomeMeasu
   ON CREATE SET a.time=study_metadata.OtherOutcomeTimeFrame[i]
                 )
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -330,7 +333,7 @@ with study_metadata, ct, p
 UNWIND study_metadata.SamplingMethod as SamplingMethod
 SET p.sampling=SamplingMethod
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -346,7 +349,7 @@ with ct, g, study_metadata
 UNWIND study_metadata.GenderDescription as GenderDescription
 set g.description=GenderDescription
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -360,7 +363,7 @@ UNWIND study_metadata.MinimumAge as MinAge
 UNWIND study_metadata.MaximumAge as MaxAge
 MERGE (ct)-[:INCLUDES_AGE_RANGE]->(a:AgeRange{minAge:MinAge,maxAge:MaxAge})
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -379,7 +382,7 @@ with study_metadata, ct, Inclusion, Exclusion, RANGE(1,size(Exclusion)-1) as nex
 FOREACH(i in nexcl | 
 MERGE(ct)-[:HAS_EXCLUSION_CRITERIA]->(excl:ExclusionCriteria{criteria:Exclusion[i]}))
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -392,7 +395,7 @@ UNWIND study_metadata.CentralContactName as Name
 UNWIND study_metadata.CentralContactEMail as Email
 MERGE (ct)-[:HAS_CONTACT_PERSON]->(c:Contact{name:Name,email:Email})
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -416,7 +419,7 @@ FOREACH(i in ncity |
         MERGE(ci)-[:LOCATED_IN]->(c) 
                )
 ;
- call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
+call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
 UNWIND nloop as i
 with range(1+1000*i,1000+1000*i,999) as RANGES
@@ -440,7 +443,7 @@ UNWIND study_metadata.SeeAlsoLinkURL as URL
 MERGE(l:Link{url:URL})
 MERGE(ct)-[:REFERS_TO_URL]->(l)
 ;
- match(i:InclusionCriteria) where i.criteria in ['-', 'none'] DETACH DELETE i
+match(i:InclusionCriteria) where i.criteria in ['-', 'none'] DETACH DELETE i
 ;
- match(e:ExclusionCriteria) where e.criteria in ['-', 'none'] DETACH DELETE e
+match(e:ExclusionCriteria) where e.criteria in ['-', 'none'] DETACH DELETE e
 ;
