@@ -24,22 +24,18 @@ Docker image location: [covidgraph/data-clinical_trials_gov](https://hub.docker.
 
 ### Run prebuild  image
 
-`docker run -it --rm --name data-cord19 -e GC_NEO4J_URL="bolt://${HOSTNAME}:7687" covidgraph/data-clinical_trials_gov`
+`docker run -it --rm --name data-cord19 --network host -e NEO4J='{"host":"localhost"}' covidgraph/data-clinical_trials_gov`
 ### Build and run local image
 
 `docker build -t data-clinical_trials_gov .`
 
-`docker run -it --rm --name data-cord19 -e GC_NEO4J_URL='bolt://myneo4jhostname:7687' -e GC_NEO4J_USER=neo4j -e GC_NEO4J_PASSWORD=mysecret data-clinical_trials_gov`
+`docker run -it --rm --name data-cord19 --network host -e NEO4J='{"host":"localhost"}' data-clinical_trials_gov`
 
 ### Envs
 
 The most important Env variables are:
 
-`GC_NEO4J_URL`: The full bolt url example 'bolt://myneo4jhostname:7687'
-
-`GC_NEO4J_USER`: The neo4j user
-
-`GC_NEO4J_PASSWORD`: The neo4j password
+`NEO4J`: defaults to `{"host":"localhost"}`. The connections details for the database. For details see https://github.com/covidgraph/motherlode/blob/master/README.md#the-neo4j-connection-string
 
 ## Python (without Docker)
 
