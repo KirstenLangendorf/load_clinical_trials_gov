@@ -356,14 +356,15 @@ with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 UNWIND study_metadata.EligibilityCriteria as EligibilityCriteria
-with study_metadata, ct, split(replace(replace(trim(substring(EligibilityCriteria,length(split(EligibilityCriteria,"Exclusion")[0]),size(EligibilityCriteria))),'\n','#'),'##','#'),'#') as Exclusion, 
-split(replace(replace(trim(substring(EligibilityCriteria,0,length(split(EligibilityCriteria,"Exclusion")[0]))),'\n','#'),'##','#'),'#') as Inclusion
-with study_metadata, ct, Inclusion, Exclusion, RANGE(1,size(Inclusion)-1) as nincl
+with ct, EligibilityCriteria,
+  CASE WHEN apoc.text.indexOf(toUpper(EligibilityCriteria),'INCLUSION CRITERIA')> -1 THEN split(replace(replace(trim(substring(EligibilityCriteria,19,size(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','#'),'##','#'),'#') ELSE ["none"] END AS Inclusion,
+  CASE WHEN apoc.text.indexOf(toUpper(EligibilityCriteria),'EXCLUSION CRITERIA')> -1 THEN split(replace(replace(trim(substring(EligibilityCriteria,size(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','#'),'##','#'),'#')  ELSE ["none"] END AS Exclusion
+with ct, Inclusion, Exclusion, RANGE(0,size(Inclusion)-1) as nincl
 FOREACH(i in nincl |  
-MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl:InclusionCriteria{criteria:Inclusion[i]}) ) 
-with study_metadata, ct, Inclusion, Exclusion, RANGE(1,size(Exclusion)-1) as nexcl
+MERGE(incl:InclusionCriteria{criteria:Inclusion[i]}) MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl)) 
+with ct, Inclusion, Exclusion, RANGE(0,size(Exclusion)-1) as nexcl
 FOREACH(i in nexcl | 
-MERGE(ct)-[:HAS_EXCLUSION_CRITERIA]->(excl:ExclusionCriteria{criteria:Exclusion[i]}))
+MERGE(excl:ExclusionCriteria{criteria:Exclusion[i]}) MERGE(ct)-[:HAS_EXCLUSION_CRITERIA]->(excl))
 ;
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
