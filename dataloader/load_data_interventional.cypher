@@ -105,13 +105,13 @@ UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id}), (r:Response{YN:'Yes'})
 UNWIND study_metadata.IsUnapprovedDevice as IsUnapprovedDevice
 FOREACH(ignoreMe IN CASE WHEN IsUnapprovedDevice='Yes' THEN [1] ELSE [] END | 
-      MERGE(ct)-[:IS_FDA_REGULATED_DEVICE]->(r))
+      MERGE(ct)-[:IS_FDA_UNAPPROVED_DEVICE]->(r))
 with study_metadata
 UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id}),(r:Response{YN:'No'})
 UNWIND study_metadata.IsUnapprovedDevice as IsUnapprovedDevice
 FOREACH(ignoreMe IN CASE WHEN IsUnapprovedDevice='No' THEN [1] ELSE [] END | 
-      MERGE(ct)-[:IS_FDA_REGULATED_DEVICE]->(r))
+      MERGE(ct)-[:IS_FDA_UNAPPROVED_DEVICE]->(r))
 ;
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+AREA%5BStudyType%5DInterventional&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
