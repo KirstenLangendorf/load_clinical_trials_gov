@@ -188,7 +188,7 @@ MERGE (ct)-[:IS_STUDYING]->(c)
 with ct, c, t,study_metadata
 UNWIND study_metadata.Keyword as Keyword
 MERGE(k:Keyword{word:Keyword}) 
-MERGE(ct)-[:IS_STUDYING]->(k) 
+MERGE(ct)-[:HAS_KEYWORD]->(k) 
 with ct, t, study_metadata
 UNWIND study_metadata.DetailedDescription as DetailedDescription
 set t.description=DetailedDescription
