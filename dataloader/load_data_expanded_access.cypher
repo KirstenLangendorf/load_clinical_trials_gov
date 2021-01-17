@@ -230,7 +230,7 @@ UNWIND study_metadata.NCTId as Id
 UNWIND study_metadata.BioSpecRetention as BioSpecRetention
 match(ct:ClinicalTrial{NCTId:Id})
 MERGE(b:BioSpecimen{retension:BioSpecRetention})
-MERGE(ct)-[:HAS_SMAPLES_RETAINED_IN_BIOREPOSITORY]->(b)
+MERGE(ct)-[:HAS_SAMPLES_RETAINED_IN_BIOREPOSITORY]->(b)
 with b, study_metadata
 UNWIND study_metadata.BioSpecDescription as BioSpecDescription
 SET b.description=BioSpecDescription
