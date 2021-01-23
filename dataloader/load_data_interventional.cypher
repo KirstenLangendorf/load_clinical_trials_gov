@@ -211,7 +211,7 @@ MERGE(p:Purpose{name:Purpose})
 MERGE (ct)-[:HAS_PURPOSE]->(p)
 with ct, study_metadata
 UNWIND study_metadata.DesignInterventionModel as Model
-MERGE(m:Design{name:Model})
+MERGE(m:Design{model:Model})
 MERGE (ct)-[:HAS_STUDY_DESIGN]->(m)
 with ct, m, study_metadata
 UNWIND study_metadata.DesignInterventionModelDescription as ModelDescription
