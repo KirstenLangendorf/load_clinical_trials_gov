@@ -373,15 +373,21 @@ with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 UNWIND study_metadata.EligibilityCriteria as EligibilityCriteria
-with ct, EligibilityCriteria,
-  CASE WHEN apoc.text.indexOf(toUpper(EligibilityCriteria),'INCLUSION CRITERIA')> -1 THEN split(replace(replace(trim(substring(EligibilityCriteria,19,size(split(EligibilityCriteria,"Exclusion")[0])-19)),'\n','#'),'##','#'),'#') ELSE ["none"] END AS Inclusion,
-  CASE WHEN apoc.text.indexOf(toUpper(EligibilityCriteria),'EXCLUSION CRITERIA')> -1 THEN split(replace(replace(trim(substring(EligibilityCriteria,size(split(EligibilityCriteria,"Exclusion")[0])+19,size(EligibilityCriteria))),'\n','#'),'##','#'),'#')  ELSE ["none"] END AS Exclusion
-with ct, Inclusion, Exclusion, RANGE(0,size(Inclusion)-1) as nincl
-FOREACH(i in nincl |  
-MERGE(incl:InclusionCriteria{criteria:Inclusion[i]}) MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl)) 
-with ct, Inclusion, Exclusion, RANGE(0,size(Exclusion)-1) as nexcl
-FOREACH(i in nexcl | 
-MERGE(excl:ExclusionCriteria{criteria:Exclusion[i]}) MERGE(ct)-[:HAS_EXCLUSION_CRITERIA]->(excl))
+with ct, EligibilityCriteria,apoc.text.indexOf(toUpper(EligibilityCriteria),'INCLUSION') as pos_incl, apoc.text.indexOf(toUpper(EligibilityCriteria),'EXCLUSION') as pos_excl
+with ct, EligibilityCriteria, pos_incl, pos_excl,
+CASE WHEN pos_incl > -1 THEN 
+  CASE WHEN pos_excl > -1 THEN 
+   CASE WHEN pos_incl < pos_excl THEN trim(substring(EligibilityCriteria,pos_incl,pos_excl)) ELSE trim(substring(EligibilityCriteria,pos_incl,size(EligibilityCriteria))) END
+    ELSE trim(substring(EligibilityCriteria,pos_incl,size(EligibilityCriteria))) END
+ELSE ["none"] END AS Inclusion,
+  CASE WHEN pos_excl > -1 THEN 
+   CASE WHEN pos_incl > -1 THEN 
+    CASE WHEN pos_excl < pos_incl THEN trim(substring(EligibilityCriteria,pos_excl,pos_incl)) ELSE trim(substring(EligibilityCriteria,pos_excl,size(EligibilityCriteria))) END
+    ELSE trim(substring(EligibilityCriteria,pos_excl,size(EligibilityCriteria))) END
+ELSE ["none"] END AS Exclusion
+with ct, Inclusion, Exclusion
+MERGE(incl:InclusionCriteria{criteria:Inclusion}) MERGE(ct)-[:HAS_INCLUSION_CRITERIA]->(incl) 
+MERGE(excl:ExclusionCriteria{criteria:Exclusion}) MERGE(ct)-[:HAS_EXCLUSION_CRITERIA]->(excl)
 ;
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=COVID+AND+NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
