@@ -16,7 +16,7 @@ Neo4j version: < 3.5.17
 
 APOC version: < 3.5.0.11
 
-Docker image location: [covidgraph/data-clinical_trials_gov](https://hub.docker.com/repository/docker/covidgraph/data-clinical_trials_gov)
+Docker image location: [covidgraph/data-clinical_trials_gov](https://hub.docker.com/r/covidgraph/data-clinical_trials_gov)
 
 # Usage
 
