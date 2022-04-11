@@ -37,7 +37,7 @@ MERGE(s:Status{status:Status})
 MERGE(ct)-[:HAS_STATUS]->(s)
 with ct,s, study_metadata
 UNWIND study_metadata.StartDate as StartDate
-MERGE (d:Start{date:StartDate}) MERGE (ct)-[:STARTED_AT]->(d)
+MERGE (d:Date:ClinicalTrialDate{date:StartDate}) MERGE (ct)-[:STARTED_AT]->(d)
 with ct, s, study_metadata
 UNWIND study_metadata.PrimaryCompletionDate as PrimaryCompletionDate
 UNWIND study_metadata.CompletionDate as CompletionDate
@@ -61,14 +61,14 @@ with r, study_metadata
 UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id}) 
 UNWIND study_metadata.LeadSponsorName as LeadSponsorName
-MERGE(k:Sponsor{name:LeadSponsorName})
+MERGE(k:Sponsor:Entity{name:LeadSponsorName})
 FOREACH(ignoreMe IN CASE WHEN r.type='Sponsor' THEN [1] ELSE [] END | 
     MERGE(r)-[:IS_RESPONSIBLE]->(k)
     MERGE(ct)-[:IS_SPONSORED_BY]->(k))
 with ct, k, r, study_metadata
 UNWIND study_metadata.ResponsiblePartyInvestigatorFullName  as InvestigatorFullName
 UNWIND study_metadata.ResponsiblePartyInvestigatorAffiliation as InvestigatorAffiliation
-MERGE(i:Investigator{name:InvestigatorFullName, affiliation:InvestigatorAffiliation})
+MERGE(i:Investigator:Entity{name:InvestigatorFullName, affiliation:InvestigatorAffiliation})
 MERGE(ct)-[:IS_CONDUCTED_BY]->(i)
 with ct, r, i,k,study_metadata
 FOREACH(ignoreMe IN CASE WHEN r.type='Principal Investigator' THEN [1] ELSE [] END | 
@@ -87,7 +87,7 @@ with value.StudyFieldsResponse.StudyFields as coll unwind coll as study_metadata
 UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 UNWIND study_metadata.CollaboratorName as CollaboratorName
-MERGE(sp:Collaborator{name:CollaboratorName})
+MERGE(sp:Collaborator:Entity{name:CollaboratorName})
 MERGE(ct)-[:IS_SUPPORTED_BY]->(sp)
 ;
 MERGE(r:Response{YN:'Yes'})
@@ -187,7 +187,7 @@ MERGE (c:Condition{disease:Condition})
 MERGE (ct)-[:IS_STUDYING]->(c)
 with ct, c, t,study_metadata
 UNWIND study_metadata.Keyword as Keyword
-MERGE(k:Keyword{word:Keyword}) 
+MERGE(k:Keyword{Keyword:Keyword}) 
 MERGE(ct)-[:HAS_KEYWORD]->(k) 
 with ct, t, study_metadata
 UNWIND study_metadata.DetailedDescription as DetailedDescription
@@ -400,7 +400,7 @@ UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 UNWIND study_metadata.CentralContactName as Name
 UNWIND study_metadata.CentralContactEMail as Email
-MERGE (ct)-[:HAS_CONTACT_PERSON]->(c:Contact{name:Name,email:Email})
+MERGE (ct)-[:HAS_CONTACT_PERSON]->(c:Contact:Entity{name:Name,email:Email})
 ;
 call apoc.load.json('https://clinicaltrials.gov/api/query/study_fields?expr=NOT+AREA%5BStudyType%5DInterventional+AND+NOT+AREA%5BStudyType%5DObservational&fields=NCTId&fmt=json&max_rnk=1000') yield value
 with value.StudyFieldsResponse.NStudiesFound as NStudies, RANGE(0,(value.StudyFieldsResponse.NStudiesFound/1000)) as nloop
@@ -437,7 +437,7 @@ UNWIND study_metadata.NCTId as Id
 match(ct:ClinicalTrial{NCTId:Id})
 with ct, study_metadata, RANGE(0,size(study_metadata.ReferencePMID)-1) as nref
 FOREACH(i in nref | 
-        MERGE(p:PaperId{id:study_metadata.ReferencePMID[i],type:'pubmed_id'})
+        MERGE(p:ArticleId{ID:study_metadata.ReferencePMID[i],IdType:'pubmed'})
         MERGE(c:Citation{name:study_metadata.ReferenceCitation[i]})
         MERGE(r:ReferenceType{name:study_metadata.ReferenceType[i]})
         MERGE(ct)-[:REFERS_TO]->(c)
