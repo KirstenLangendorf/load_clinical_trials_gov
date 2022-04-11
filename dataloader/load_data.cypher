@@ -12,16 +12,15 @@ merge (ct:ClinicalTrial{NCTId:Id,data_source:'clinicaltrials.gov',url:'https://c
 MERGE(st:StudyType{type:StudyType}) MERGE(ct)-[:IS_TYPE]->(st)
 WITH Id, ct, study_metadata, RANGE(0,size(study_metadata.LocationFacility)-1) as nfacil
 FOREACH(i in nfacil | 
-        MERGE(fa:Facility{facilityName:study_metadata.LocationFacility[i]})
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(fa:Facility{name:study_metadata.LocationFacility[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
         MERGE(ct)-[:CONDUCTED_AT]->(fa)
         MERGE(fa)-[:LOCATED_IN]->(ci)
        )
 WITH Id, study_metadata, RANGE(0,size(study_metadata.LocationCity)-1) as ncity
 FOREACH(i in ncity | 
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
+        MERGE(c:Country{name:study_metadata.LocationCountry[i]})
         MERGE(ci)-[:LOCATED_IN]->(c) 
                )
 with Id, study_metadata
@@ -87,16 +86,15 @@ MERGE(st:StudyType{type:StudyType}) MERGE(ct)-[:IS_TYPE]->(st)
 MERGE(ph:Phase{phase:Phase}) MERGE(ct)-[:IS_PHASE]->(ph)
 WITH Id, ct, study_metadata, RANGE(0,size(study_metadata.LocationFacility)-1) as nfacil
 FOREACH(i in nfacil | 
-        MERGE(fa:Facility{facilityName:study_metadata.LocationFacility[i]})
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(fa:Facility{name:study_metadata.LocationFacility[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
         MERGE(ct)-[:CONDUCTED_AT]->(fa)
         MERGE(fa)-[:LOCATED_IN]->(ci)
        )
 WITH Id, study_metadata, RANGE(0,size(study_metadata.LocationCity)-1) as ncity
 FOREACH(i in ncity | 
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
+        MERGE(c:Country{name:study_metadata.LocationCountry[i]})
         MERGE(ci)-[:LOCATED_IN]->(c) 
                )
 with Id, study_metadata
@@ -162,16 +160,15 @@ merge (ct:ClinicalTrial{NCTId:Id,data_source:'clinicaltrials.gov',url:'https://c
 MERGE(st:StudyType{type:StudyType}) MERGE(ct)-[:IS_TYPE]->(st)
 WITH Id, ct, study_metadata, RANGE(0,size(study_metadata.LocationFacility)-1) as nfacil
 FOREACH(i in nfacil | 
-        MERGE(fa:Facility{facilityName:study_metadata.LocationFacility[i]})
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(fa:Facility{name:study_metadata.LocationFacility[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
         MERGE(ct)-[:CONDUCTED_AT]->(fa)
         MERGE(fa)-[:LOCATED_IN]->(ci)
        )
 WITH Id, study_metadata, RANGE(0,size(study_metadata.LocationCity)-1) as ncity
 FOREACH(i in ncity | 
-        MERGE(ci:City{cityName:study_metadata.LocationCity[i]})
-        MERGE(c:Country{countryName:study_metadata.LocationCountry[i]})
+        MERGE(ci:City{name:study_metadata.LocationCity[i]})
+        MERGE(c:Country{name:study_metadata.LocationCountry[i]})
         MERGE(ci)-[:LOCATED_IN]->(c) 
                )
 with Id, study_metadata

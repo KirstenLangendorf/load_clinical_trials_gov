@@ -2,6 +2,7 @@ import os
 import sys
 import py2neo
 import logging
+import json
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
@@ -14,11 +15,14 @@ if __name__ == "__main__":
     PARENT_DIR = os.path.join(SCRIPT_DIR, "..")
     sys.path.append(os.path.normpath(PARENT_DIR))
 
-cypher_files = ["load_data.cypher"]
+cypher_files = [
+    "load_data_observational.cypher",
+    "load_data_interventional.cypher",
+    "load_data_expanded_access.cypher",
+]
 
-neo4j_url = os.getenv("GC_NEO4J_URL", "bolt://localhost:7687")
-neo4j_user = os.getenv("GC_NEO4J_USER", None)
-neo4j_pw = os.getenv("GC_NEO4J_PASSWORD", None)
+neo4j_config_str = os.getenv("NEO4J", '{"host":"localhost"}')
+neo4j_config_dict = json.loads(neo4j_config_str)
 ENV = os.getenv("ENV", "prod")
 
 
@@ -86,7 +90,7 @@ def parse_cypher_file(path: str):
 
 
 if __name__ == "__main__":
-    graph = py2neo.Graph(neo4j_url, user=neo4j_user, password=neo4j_pw)
+    graph = py2neo.Graph(**neo4j_config_dict)
     for file in cypher_files:
         file_path = os.path.join(SCRIPT_DIR, file)
         queries = parse_cypher_file(file_path)
@@ -94,3 +98,4 @@ if __name__ == "__main__":
             log.info("\nRun query \n'{}'".format(q))
             tx = graph.begin()
             tx.run(q)
+            tx.commit()
