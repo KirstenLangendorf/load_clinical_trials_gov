@@ -8,7 +8,7 @@ https://github.com/covidgraph/documentation/issues/8
 
 This python script loads data from [ClinicalTrials.gov API](https://clinicaltrials.gov/api/gui/home) into the neo4j based covidgraph. The script gets data from the StudyFields, which are described on this API homepage.
 
-Maintainer: [Kirsten](https://github.com/KirstenLangendorf)
+Maintainer: [Kirsten](https://github.com/KWLangendorf)
 
 Version: 0.2.1
 
